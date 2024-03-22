@@ -1,10 +1,10 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import BookCard from '../components/BookCard';
 import Modal from '../components/Modal';
-import SignupForm from '../components/SignupForm'; // Adjust the path as necessary
-import LoginForm from '../components/LoginForm'; // Adjust the path as necessary
+import SignupForm from '../components/SignupForm';
+import LoginForm from '../components/LoginForm';
+import { useAuth } from '../context/AuthContext';
 
-// Define the type for a book
 interface Book {
   id: number;
   cover: string;
@@ -16,7 +16,11 @@ export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
   const [showSignup, setShowSignup] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [showDescriptionModal, setShowDescriptionModal] = useState(false);
+  const [selectedBookDescription, setSelectedBookDescription] = useState('');
 
+  const { isLoggedIn, logOut } = useAuth();
 
 
   useEffect(() => {
@@ -29,7 +33,13 @@ export default function Home() {
   const toggleSignup = () => setShowSignup(!showSignup);
   const toggleLogin = () => setShowLogin(!showLogin);
 
-
+  const handleReadMore = (bookId: number) => {
+    const book = books.find(b => b.id === bookId);
+    if (book) {
+      setSelectedBook(book);
+      setShowDescriptionModal(true); // You'll need to manage this state
+    }
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,13 +72,18 @@ export default function Home() {
   return (
     <>
       <nav className="bg-gray-900 text-white px-4 py-2 flex justify-between items-center">
-        {/* Logo and Navigation (Placeholder) */}
         <div>
           <a href="/" className="text-3xl font-bold">Book Market</a>
         </div>
         <div>
-          <button onClick={toggleSignup} className="text-lg hover:underline mr-4">Sign Up</button>
-          <button onClick={toggleLogin} className="text-lg hover:underline">Login</button>
+          {!isLoggedIn ? (
+            <>
+              <button onClick={toggleSignup} className="text-lg hover:underline mr-4">Sign Up</button>
+              <button onClick={toggleLogin} className="text-lg hover:underline">Login</button>
+            </>
+          ) : (
+            <button onClick={logOut} className="text-lg hover:underline">Sign Out</button>
+          )}
         </div>
         <div>
           <a href="#subscribe" className="text-lg hover:underline">Subscribe</a>
@@ -85,7 +100,14 @@ export default function Home() {
         <h2 className="text-2xl font-bold text-center my-8">Featured Books</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {books.map((book) => (
-            <BookCard key={book.id} cover={book.cover} title={book.title} description={book.description} />
+            <BookCard
+              key={book.id}
+              cover={book.cover}
+              title={book.title}
+              description={book.description}
+              setShowDescriptionModal={setShowDescriptionModal}
+              setSelectedBookDescription={setSelectedBookDescription}
+            />
           ))}
         </div>
       </section>
@@ -99,7 +121,11 @@ export default function Home() {
         <SignupForm />
       </Modal>
       <Modal isOpen={showLogin} onClose={toggleLogin}>
-        <LoginForm />
+        <LoginForm onClose={toggleLogin} />
+      </Modal>
+      {/* Description Modal */}
+      <Modal isOpen={showDescriptionModal} onClose={() => setShowDescriptionModal(false)}>
+        <p>{selectedBookDescription}</p>
       </Modal>
       <footer className="bg-gray-900 text-white text-center p-4">
         <p>&copy; {new Date().getFullYear()} Me Book Market. All rights reserved.</p>

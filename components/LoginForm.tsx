@@ -1,9 +1,14 @@
-// components/LoginForm.js
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
-function LoginForm() {
+interface LoginFormProps {
+  onClose: () => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { logIn } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -17,8 +22,10 @@ function LoginForm() {
 
     const data = await response.json();
     if(response.ok) {
-      alert('Login successful');
+      logIn();      // Update the auth state to logged in
+      onClose();    // Close the modal
     } else {
+      const data = await response.json();
       alert(`Login failed: ${data.error}`);
     }
   };
