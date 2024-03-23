@@ -16,7 +16,7 @@ export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
   const [showSignup, setShowSignup] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const [selectedBook, setSelectedBook] = useState(null);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const [selectedBookDescription, setSelectedBookDescription] = useState('');
 
@@ -37,7 +37,7 @@ export default function Home() {
     const book = books.find(b => b.id === bookId);
     if (book) {
       setSelectedBook(book);
-      setShowDescriptionModal(true); // You'll need to manage this state
+      setShowDescriptionModal(true);
     }
   };
 
@@ -101,7 +101,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {books.map((book) => (
             <BookCard
-              key={book.id}
+              id={book.id}
               cover={book.cover}
               title={book.title}
               description={book.description}
