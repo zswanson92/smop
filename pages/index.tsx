@@ -1,9 +1,11 @@
 import React, { FormEvent, useEffect, useState } from 'react';
+import Link from 'next/link';
 import BookCard from '../components/BookCard';
 import Modal from '../components/Modal';
 import SignupForm from '../components/SignupForm';
 import LoginForm from '../components/LoginForm';
 import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/NavBar';
 
 interface Book {
   id: number;
@@ -71,26 +73,8 @@ export default function Home() {
 
   return (
     <>
-      <nav className="bg-gray-900 text-white px-4 py-2 flex justify-between items-center">
-        <div>
-          <a href="/" className="text-3xl font-bold">Book Market</a>
-        </div>
-        <div>
-          {!isLoggedIn ? (
-            <>
-              <button onClick={toggleSignup} className="text-lg hover:underline mr-4">Sign Up</button>
-              <button onClick={toggleLogin} className="text-lg hover:underline">Login</button>
-            </>
-          ) : (
-            <button onClick={logOut} className="text-lg hover:underline">Sign Out</button>
-          )}
-        </div>
-        <div>
-          <a href="#subscribe" className="text-lg hover:underline">Subscribe</a>
-        </div>
-      </nav>
-
-      <div className="bg-gray-800 min-h-screen flex flex-col items-center justify-center text-white">
+      <Navbar />
+      <div className="pt-16 bg-gray-900 min-h-screen flex flex-col items-center justify-center text-white">
         {/* Existing Hero Section */}
         <h1 className="text-4xl font-bold mb-4">Ahoy! Welcome to Me Book Market</h1>
         <p className="text-lg mb-8">Discover me latest treasures and subscribe for updates, ye landlubber!</p>
@@ -99,8 +83,9 @@ export default function Home() {
         <section className="container mx-auto px-6">
         <h2 className="text-2xl font-bold text-center my-8">Featured Books</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {books.map((book) => (
+        {books.map((book) => (
             <BookCard
+              key={book.id} // Add the unique key here using the book's id
               id={book.id}
               cover={book.cover}
               title={book.title}
@@ -111,19 +96,16 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-        {/* Subscribe Section (moved to the bottom) */}
         <form onSubmit={handleSubmit} className="flex flex-col items-center" id="subscribe">
           {/* Existing Subscription Form */}
         </form>
       </div>
       <Modal isOpen={showSignup} onClose={toggleSignup}>
-        <SignupForm />
+        <SignupForm onClose={toggleSignup}/>
       </Modal>
       <Modal isOpen={showLogin} onClose={toggleLogin}>
         <LoginForm onClose={toggleLogin} />
       </Modal>
-      {/* Description Modal */}
       <Modal isOpen={showDescriptionModal} onClose={() => setShowDescriptionModal(false)}>
         <p>{selectedBookDescription}</p>
       </Modal>

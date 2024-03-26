@@ -3,9 +3,16 @@
 @tailwind utilities;
 
 :root {
+  --dark-wood-rgb: 62, 39, 35;
+  --gold-rgb: 255, 215, 0;
+  --sand-rgb: 255, 232, 161;
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --dark-wood: #3e2723;
+  --gold: #ffd700;
+  --sand: #ffe8a1;
+  --ocean-blue: #0277bd;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -16,18 +23,96 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@layer components {
+  .font-pirate {
+    font-family: 'Pieces of Eight', cursive; /* Replace with the correct font import */
+  }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .bg-dark-wood {
+    --tw-bg-opacity: 1;
+    background-color: rgba(var(--dark-wood-rgb), var(--tw-bg-opacity));
+    background-image: url('/path/to/your/wood-texture.jpg');
+    background-size: cover;
   }
+
+  .bg-gold {
+    --tw-bg-opacity: 1;
+    background-color: rgba(var(--gold-rgb), var(--tw-bg-opacity));
+  }
+
+  .border-gold {
+    --tw-border-opacity: 1;
+    border-color: rgba(var(--gold-rgb), var(--tw-border-opacity));
+  }
+
+  .text-gold {
+    --tw-text-opacity: 1;
+    color: rgba(var(--gold-rgb), var(--tw-text-opacity));
+  }
+
+  .hover\:text-sand:hover {
+    --tw-text-opacity: 1;
+    color: rgba(var(--sand-rgb), var(--tw-text-opacity));
+  }
+
+  .text-balance {
+    text-wrap: balance; /* This is not a standard CSS property and may not work as expected */
+  }
+}
+
+/* Styling for the blog container and components */
+.blog-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.form-container {
+  background: #f3f3f3;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+.post-form .form-group {
+  margin-bottom: 20px;
+}
+
+.post-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.post-form input, .post-form textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.submit-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.posts-display .post-card {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.posts-display h2 {
+  margin-top: 0;
+}
+
+.post-card p {
+  word-wrap: break-word; /* Ensures words break to prevent overflow */
 }

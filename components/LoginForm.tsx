@@ -13,22 +13,30 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const response = await fetch('http://localhost:5000/api/login', {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Basic ' + btoa(username + ':' + password),
-      },
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    const data = await response.json();
-    if(response.ok) {
-      logIn();      // Update the auth state to logged in
-      onClose();    // Close the modal
-    } else {
-      const data = await response.json();
-      alert(`Login failed: ${data.error}`);
+      if (response.ok) {
+        const data = await response.json();
+        const { access_token } = await response.json();
+        localStorage.setItem('access_token', data.access_token); // Store the token
+        logIn(access_token); // Update the auth state to logged in
+        onClose(); // Close the modal
+      } else {
+        alert('Login failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Login failed: An error occurred');
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} style={{ width: '300px', display: 'flex', flexDirection: 'column' }}>

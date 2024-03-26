@@ -1,25 +1,39 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
-function SignupForm() {
+interface SignupFormProps {
+  onClose: () => void;
+}
+
+const SignupForm: React.FC<SignupFormProps> = ({ onClose }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { logIn } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const response = await fetch('http://localhost:5000/api/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    const data = await response.json();
-    if(response.ok) {
-      alert('Signup successful');
-    } else {
-      alert(`Signup failed: ${data.error}`);
+      if (response.ok) {
+        const data = await response.json(); // Get the data from the response
+        logIn(data.access_token); // Use the token to log in
+        onClose(); // Close the signup form/modal
+        alert('Signup successful');
+      } else {
+        const data = await response.json();
+        alert(`Signup failed: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Signup failed: An error occurred');
     }
   };
 
@@ -47,6 +61,5 @@ function SignupForm() {
     </form>
   );
 };
-
 
 export default SignupForm;

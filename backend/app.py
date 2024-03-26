@@ -1,10 +1,23 @@
 from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
+from flask_sqlalchemy import SQLAlchemy
+from models import db
+from models.BlogPost import BlogPost
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+from flask_bcrypt import Bcrypt
+from datetime import timedelta
+from models.User import User
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 CORS(app)
 auth = HTTPBasicAuth()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+app.config['JWT_SECRET_KEY'] = 'your-secret-key'
+jwt = JWTManager(app)
 
 books = [
     {"id": 1, "title": "Gerard's Fortune", "description": "A boy grows up hunting, a gamekeeper for the castle. A hunting guide by day, who dreams each night of the sea. Old enough to sign aboard a ship, he sails away from home to follow his dreams. The shipwreck leaves him stranded on an island. the natives adopt him, and he becomes part of the village. Five years pass before another ship arrives; but instead of a rescue, Pirates attack the island. The village fights back, and Gerard helps them capture the ship. the crew needs a captain, and he needs a way back home. Can he keep them safe? Can Gerard hold onto the treasure he has found?", "cover": "https://sevenminutesofpiracy.com/wp-content/uploads/2022/12/Fortune-ebook-1-188x300.png"},
@@ -19,6 +32,17 @@ users = {
     "user1": "password1",
     "user2": "password2"
 }
+
+# Assuming this structure for each blog post
+blog_posts = [
+    {
+        'id': 1,
+        'title': 'First Post',
+        'content': 'Content of the first post.',
+        # Include other blog post attributes here
+    },
+    # ... other posts
+]
 
 @auth.verify_password
 def verify_password(username, password):
@@ -35,19 +59,85 @@ def get_books():
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
-    username = request.json.get('username')
-    password = request.json.get('password')
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
     if not username or not password:
-        return make_response(jsonify({'error': 'Missing username or password'}), 400)
-    if username in users:
-        return make_response(jsonify({'error': 'User already exists'}), 400)
-    users[username] = password
-    return jsonify({'message': 'User created successfully'}), 201
+        return jsonify({'message': 'Username and password are required'}), 400
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({'message': 'Username already exists'}), 400
+
+    new_user = User(username=username)
+    new_user.set_password(password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    access_token = create_access_token(identity=username)
+
+    return jsonify(access_token=access_token), 201
 
 @app.route('/api/login', methods=['GET'])
-@auth.login_required
+@jwt_required()
 def login():
-    return jsonify({'message': 'Welcome, {}!'.format(auth.current_user())})
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
+    # This example uses plain text for simplicity. Implement proper password hashing in production.
+    user = users.get(username)
+    print(user)
+    if user:
+        access_token = create_access_token(identity=username, expires_delta=timedelta(hours=1))
+        print(access_token)
+        return jsonify(access_token=access_token)
+    return jsonify({"msg": "Bad username or password"}), 401
+
+
+# Blog CRUD Operations
+@app.route('/api/blog', methods=['GET'])
+def get_blog_posts():
+    all_posts = BlogPost.query.all()
+    return jsonify([{'id': post.id, 'title': post.title, 'content': post.content} for post in all_posts])
+
+@app.route('/api/blog', methods=['POST'])
+@jwt_required()
+def create_blog_post():
+    post_data = request.json
+    if not post_data or not post_data.get('title') or not post_data.get('content'):
+        return make_response(jsonify({'error': 'Missing title or content'}), 400)
+
+    new_post = BlogPost(title=post_data['title'], content=post_data['content'])
+    db.session.add(new_post)
+    db.session.commit()
+    return jsonify({'id': new_post.id, 'title': new_post.title, 'content': new_post.content}), 201
+
+@app.route('/api/blog/<int:post_id>', methods=['GET'])
+def get_single_blog_post(post_id):
+    post = BlogPost.query.get_or_404(post_id)
+    return jsonify({'id': post.id, 'title': post.title, 'content': post.content})
+
+@app.route('/api/blog/<int:post_id>', methods=['PUT'])
+@jwt_required()
+def update_blog_post(post_id):
+    post = BlogPost.query.get_or_404(post_id)
+    post_data = request.json
+    post.title = post_data.get('title', post.title)
+    post.content = post_data.get('content', post.content)
+    db.session.commit()
+    return jsonify({'id': post.id, 'title': post.title, 'content': post.content})
+
+@app.route('/api/blog/<int:post_id>', methods=['DELETE'])
+@jwt_required()
+def delete_blog_post(post_id):
+    post = BlogPost.query.get_or_404(post_id)
+    db.session.delete(post)
+    db.session.commit()
+    return jsonify({'message': 'Post deleted'})
+
+
+# with app.app_context():
+#     db.create_all()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
