@@ -38,24 +38,24 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ width: '300px', display: 'flex', flexDirection: 'column' }}>
-      <label htmlFor="username" style={{ marginBottom: '0.5rem' }}>Username:</label>
+    <form onSubmit={handleSubmit} style={{ padding:'20px', display: 'flex', flexDirection: 'column', width: '520px',  backgroundImage: 'url(/signup_form_pic.png)', backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: '10px'}}>
+      <label htmlFor="username" className='flex justify-center' style={{ marginBottom: '0.5rem', color: 'white', fontWeight: 'bold', fontSize: '20px' }}>Username</label>
       <input
         id="username"
         type="text"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        style={{ marginBottom: '1rem', padding: '0.5rem' }}
+        style={{ marginBottom: '1rem', padding: '0.5rem', borderRadius: '10px', color: 'black', backgroundColor: 'gold' }}
       />
-      <label htmlFor="password" style={{ marginBottom: '0.5rem' }}>Password:</label>
+      <label htmlFor="password" className='flex justify-center' style={{ marginBottom: '0.5rem', color: 'white', fontWeight: 'bold', fontSize: '20px' }}>Password</label>
       <input
         id="password"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        style={{ marginBottom: '1rem', padding: '0.5rem' }}
+        style={{ marginBottom: '1rem', padding: '0.5rem', borderRadius: '10px', color: 'black', backgroundColor: 'gold' }}
       />
-      <button type="submit" style={{ padding: '0.5rem', fontWeight: 'bold', backgroundColor: 'gray' }}>
+      <button type="submit" style={{ padding: '0.5rem', fontWeight: 'bold', backgroundColor: 'gold', color: 'white', fontSize: '20px', borderRadius: '10px' }}>
         Sign Up
       </button>
     </form>

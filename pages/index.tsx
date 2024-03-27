@@ -1,19 +1,23 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import Link from 'next/link';
 import BookCard from '../components/BookCard';
 import Modal from '../components/Modal';
 import SignupForm from '../components/SignupForm';
 import LoginForm from '../components/LoginForm';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/NavBar';
-import { BsFacebook } from "react-icons/bs";
-import { ImYoutube2 } from "react-icons/im";
+import Footer from '../components/Footer';
+
 
 interface Book {
   id: number;
   cover: string;
   title: string;
   description: string;
+}
+
+interface ImageData {
+  id: number;
+  src: string;
 }
 
 export default function Home() {
@@ -23,9 +27,15 @@ export default function Home() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const [selectedBookDescription, setSelectedBookDescription] = useState('');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const rotatingImages: ImageData[] = [
+    { id: 1, src: '/tester_1.gif' },
+    { id: 2, src: '/tester_2.gif' },
+    { id: 3, src: '/youtube-video-gif.gif' },
+  ];
 
   const { isLoggedIn, logOut } = useAuth();
-
 
   useEffect(() => {
     fetch('http://localhost:5000/api/books')
@@ -33,6 +43,15 @@ export default function Home() {
       .then(data => setBooks(data))
       .catch(error => console.error("There was an error fetching the books:", error));
   }, []);
+
+  // useEffect to change image every set number of seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % rotatingImages.length);
+    }, 10000); // Change image every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, [rotatingImages.length]);
 
   const toggleSignup = () => setShowSignup(!showSignup);
   const toggleLogin = () => setShowLogin(!showLogin);
@@ -77,8 +96,11 @@ export default function Home() {
     <>
       <Navbar />
       <div className="pt-24 bg-gray-900 min-h-screen flex flex-col items-center justify-center text-white">
-        <h1 className="text-4xl font-bold mb-4 text-gold">Ahoy! Welcome to Me Book Market</h1>
-        <p className="text-lg mb-8 text-gold">Discover me latest treasures and subscribe for updates, ye landlubber!</p>
+        <h1 className="text-4xl font-bold mb-4 text-gold">Ahoy! Welcome to Seven Minutes of Piracy</h1>
+        {/* Rotating Image */}
+        <img src={rotatingImages[currentImageIndex].src} alt="Rotating Image" className="mb-8 rounded-lg shadow-lg" />
+
+        <p className="text-lg mb-8 text-gold">Discover me latest treasures below, explore the blog above, and subscribe for updates, ye landlubber!</p>
 
         {/* Featured Books Section */}
         <section className="container mx-auto px-6">
@@ -108,21 +130,24 @@ export default function Home() {
         <LoginForm onClose={toggleLogin} />
       </Modal>
       <Modal isOpen={showDescriptionModal} onClose={() => setShowDescriptionModal(false)}>
-        <p>{selectedBookDescription}</p>
+      <p style={{
+        fontFamily: '"Merriweather", serif',
+        fontSize: '22px',
+        lineHeight: '1.75', // Increase line height for readability
+        textAlign: 'left', // Align text to the left
+        padding: '20px', // Add more padding for white space
+        overflowY: 'auto', // Add scroll for long text
+        maxHeight: '70vh', // Prevent modal from getting too long
+      }}>
+        {selectedBookDescription.split('\n').map((paragraph, index) => (
+          <React.Fragment key={index}>
+            {paragraph}
+
+          </React.Fragment>
+        ))}
+      </p>
       </Modal>
-      <footer className="bg-gray-900 text-white text-center p-4">
-      <div className='flex justify-between items-center'>
-        <p style={{ marginTop: '40px' }}>&copy; {new Date().getFullYear()} Me Book Market. All rights reserved. Work by Zack Swanson. </p>
-        <div className='flex items-center'>
-          <Link href="https://www.facebook.com/sevenminutesofpiracy/?show_switched_toast=0&show_invite_to_follow=0&show_switched_tooltip=0&show_podcast_settings=0&show_community_review_changes=0&show_community_rollback=0&show_follower_visibility_disclosure=0" passHref>
-            <button className='flex items-center justify-center mr-4'> <BsFacebook style={{ fontSize: '50px' }}/> </button>
-          </Link>
-          <Link href="https://www.youtube.com/channel/UCgjqZVLRr8Xa-7nJwK6DtQw" passHref>
-            <button className='flex items-center justify-center'> <ImYoutube2 style={{ fontSize: '70px' }}/> </button>
-          </Link>
-        </div>
-      </div>
-      </footer>
+      <Footer />
     </>
   );
 }

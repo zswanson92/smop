@@ -24,7 +24,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.75)', // Darker backdrop
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -37,36 +37,42 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
       <div
         style={{
           padding: '20px',
-          background: '#FFF',
-          borderRadius: '10px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          background: '#202225', // A darker shade for contrast
+          color: '#FFFFFF', // White text color
+          borderRadius: '15px',
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          alignItems: 'center',
+          alignItems: 'start', // Align text to the start
           position: 'relative',
           transition: 'transform 200ms ease-in-out, opacity 200ms ease-in-out',
-          transform: isOpen ? 'scale(1)' : 'scale(0.9)',
+          transform: isOpen ? 'scale(1)' : 'scale(0.95)',
           opacity: isOpen ? 1 : 0,
+          maxWidth: '600px', // Max width for the modal
+          width: '90%', // Responsive width
         }}
         onClick={(e) => e.stopPropagation()} // Prevent onClick from triggering on the backdrop
       >
-        {children}
+        <div style={{ marginBottom: '20px', lineHeight: '1.6' }}>
+          {children}
+        </div>
         <button
           onClick={onClose}
           style={{
             position: 'absolute',
-            top: 10,
-            right: 10,
-            background: '#F3F4F6',
+            top: 15,
+            right: 15,
+            background: 'gold', // A blue shade for the button
             border: 'none',
-            borderRadius: '5px',
-            padding: '5px 10px',
+            borderRadius: '50%', // Circular button
+            padding: '10px',
             cursor: 'pointer',
             fontWeight: 'bold',
+            color: '#FFFFFF', // White color for the close button text
           }}
         >
-          Close
+          X
         </button>
       </div>
     </div>

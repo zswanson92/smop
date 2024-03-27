@@ -1,6 +1,8 @@
 // Media.tsx
 import React from 'react';
 import Navbar from '../components/NavBar';
+import Footer from '../components/Footer';
+
 
 const Media = () => {
   const videos = [
@@ -37,6 +39,7 @@ const Media = () => {
           ))}
         </div>
       </div>
+      <Footer />
     </>
   );
 };
