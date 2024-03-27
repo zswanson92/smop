@@ -13,6 +13,7 @@
   --gold: #ffd700;
   --sand: #ffe8a1;
   --ocean-blue: #0277bd;
+  --silver: #C0C0C0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -66,7 +67,53 @@
 .blog-container {
   max-width: 800px;
   margin: auto;
-  padding: 20px;
+  /* padding: 20px; */
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Typography Improvements */
+h1, h2, label, p {
+  font-family: 'Nunito', sans-serif; /* Example: Use a web-safe font */
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: var(--gold);
+}
+
+h2 {
+  font-size: 1.8rem;
+}
+
+/* Color Scheme Improvements */
+.form-container, .post-card {
+  background: var(--background-end-rgb);
+}
+
+/* Button and Input Improvements */
+.submit-btn, .post-form input, .post-form textarea {
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: darken(#007bff, 10%);
+}
+
+/* Responsive Design */
+@media only screen and (max-width: 600px) {
+  .blog-container {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
 }
 
 .form-container {
@@ -115,4 +162,11 @@
 
 .post-card p {
   word-wrap: break-word; /* Ensures words break to prevent overflow */
+}
+
+.fixed {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000; /* Adjust the z-index as necessary */
 }

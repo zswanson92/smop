@@ -10,7 +10,6 @@ interface BlogPost {
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  // State hooks for form fields
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
@@ -55,10 +54,33 @@ export default function Blog() {
     }
   };
 
+  const handleDelete = async (postId: number) => {
+    const token = localStorage.getItem('access_token');
+    try {
+      const response = await fetch(`http://localhost:5000/api/blog/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setPosts(posts => posts.filter(post => post.id !== postId));
+        alert('Post deleted successfully');
+      } else {
+        alert('Failed to delete post');
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      alert('An error occurred');
+    }
+  };
+
+
   return (
     <>
     <Navbar />
-    <div className="pt-16 blog-container">
+    <div className="pt-20 blog-container">
       <h1>Blog Posts</h1>
       <div className="form-container">
         <form onSubmit={handleSubmit} className="post-form">
@@ -78,6 +100,7 @@ export default function Blog() {
           <div key={post.id} className="post-card">
             <h2>{post.title}</h2>
             <p>{post.content}</p>
+            <button onClick={() => handleDelete(post.id)} className="delete-btn">Delete Post</button>
           </div>
         ))}
       </div>

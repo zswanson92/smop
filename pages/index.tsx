@@ -6,6 +6,8 @@ import SignupForm from '../components/SignupForm';
 import LoginForm from '../components/LoginForm';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/NavBar';
+import { BsFacebook } from "react-icons/bs";
+import { ImYoutube2 } from "react-icons/im";
 
 interface Book {
   id: number;
@@ -74,14 +76,13 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="pt-16 bg-gray-900 min-h-screen flex flex-col items-center justify-center text-white">
-        {/* Existing Hero Section */}
-        <h1 className="text-4xl font-bold mb-4">Ahoy! Welcome to Me Book Market</h1>
-        <p className="text-lg mb-8">Discover me latest treasures and subscribe for updates, ye landlubber!</p>
+      <div className="pt-24 bg-gray-900 min-h-screen flex flex-col items-center justify-center text-white">
+        <h1 className="text-4xl font-bold mb-4 text-gold">Ahoy! Welcome to Me Book Market</h1>
+        <p className="text-lg mb-8 text-gold">Discover me latest treasures and subscribe for updates, ye landlubber!</p>
 
         {/* Featured Books Section */}
         <section className="container mx-auto px-6">
-        <h2 className="text-2xl font-bold text-center my-8">Featured Books</h2>
+        <h2 className="text-2xl font-bold text-center my-8 text-gold">Featured Books</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {books.map((book) => (
             <BookCard
@@ -110,7 +111,17 @@ export default function Home() {
         <p>{selectedBookDescription}</p>
       </Modal>
       <footer className="bg-gray-900 text-white text-center p-4">
-        <p>&copy; {new Date().getFullYear()} Me Book Market. All rights reserved.</p>
+      <div className='flex justify-between items-center'>
+        <p style={{ marginTop: '40px' }}>&copy; {new Date().getFullYear()} Me Book Market. All rights reserved. Work by Zack Swanson. </p>
+        <div className='flex items-center'>
+          <Link href="https://www.facebook.com/sevenminutesofpiracy/?show_switched_toast=0&show_invite_to_follow=0&show_switched_tooltip=0&show_podcast_settings=0&show_community_review_changes=0&show_community_rollback=0&show_follower_visibility_disclosure=0" passHref>
+            <button className='flex items-center justify-center mr-4'> <BsFacebook style={{ fontSize: '50px' }}/> </button>
+          </Link>
+          <Link href="https://www.youtube.com/channel/UCgjqZVLRr8Xa-7nJwK6DtQw" passHref>
+            <button className='flex items-center justify-center'> <ImYoutube2 style={{ fontSize: '70px' }}/> </button>
+          </Link>
+        </div>
+      </div>
       </footer>
     </>
   );
