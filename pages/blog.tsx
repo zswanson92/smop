@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/NavBar';
 import Footer from '../components/Footer';
+import { useAuth } from '../context/AuthContext';
 
 
 interface BlogPost {
@@ -16,6 +17,7 @@ export default function Blog() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
+  const { isAdmin } = useAuth();
 
 
   useEffect(() => {
@@ -84,11 +86,8 @@ export default function Blog() {
       if (response.ok) {
         const newPost = await response.json();
         setPosts(currentPosts => [...currentPosts, newPost]);
-        // Clear form fields
         setTitle('');
         setContent('');
-        // Notify the user of successful submission
-        // toast.success('Post created successfully');
         alert('Post created successfully');
       } else {
         // toast.error('Failed to create post');
@@ -126,44 +125,50 @@ export default function Blog() {
 
   return (
     <>
-    <Navbar />
-    <div className="pt-20 min-h-screen blog-container bg-gray-900">
-      <h1 className='flex justify-center'>Blog Posts</h1>
-      <div className="form-container">
-        <form onSubmit={handleSubmit} className="post-form">
-          <div className="form-group">
-            <label htmlFor="title">Title:</label>
-            <input id="title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+      <Navbar />
+      <div className="pt-20 min-h-screen blog-container bg-gray-900">
+        <h1 className='flex justify-center'>Blog Posts</h1>
+        {isAdmin && (
+          <div className="form-container">
+            <form onSubmit={handleSubmit} className="post-form">
+              <div className="form-group">
+                <label htmlFor="title">Title:</label>
+                <input id="title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label htmlFor="content">Content:</label>
+                <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} required />
+              </div>
+              <button type="submit" className="submit-btn">Create Post</button>
+            </form>
           </div>
-          <div className="form-group">
-            <label htmlFor="content">Content:</label>
-            <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} required />
-          </div>
-          <button type="submit" className="submit-btn">Create Post</button>
-        </form>
+        )}
+        <div className="posts-display">
+          {posts.map(post => (
+            <div key={post.id} className="post-card">
+              {editingId === post.id ? (
+                <>
+                  <input value={editTitle} onChange={(e) => handleEditChange(e, 'title')} />
+                  <textarea value={editContent} onChange={(e) => handleEditChange(e, 'content')} />
+                  <button onClick={() => handleUpdate(post.id)} style={{ padding: '0.5rem', fontWeight: 'bold', backgroundColor: 'green', fontSize: '18px', borderRadius: '10px' }}>Save Changes</button>
+                </>
+              ) : (
+                <>
+                  <h2 style={{ padding: '0.5rem', fontWeight: 'bold', color: 'gold', fontSize: '50px' }} className='flex justify-center'>{post.title}</h2>
+                  <p style={{ fontSize: '25px', marginBottom: '10px' }}>{post.content}</p>
+                  {isAdmin && (
+                    <>
+                      <button onClick={() => handleEdit(post)} style={{ padding: '0.5rem', fontWeight: 'bold', backgroundColor: 'yellow', fontSize: '18px', borderRadius: '10px', marginRight: '10px' }}>Edit Post</button>
+                      <button onClick={() => handleDelete(post.id)} style={{ padding: '0.5rem', fontWeight: 'bold', backgroundColor: 'red', fontSize: '18px', borderRadius: '10px' }}>Delete Post</button>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="posts-display">
-      {posts.map(post => (
-  <div key={post.id} className="post-card">
-    {editingId === post.id ? (
-      <>
-        <input value={editTitle} onChange={(e) => handleEditChange(e, 'title')} />
-        <textarea value={editContent} onChange={(e) => handleEditChange(e, 'content')} />
-        <button onClick={() => handleUpdate(post.id)} style={{ padding: '0.5rem', fontWeight: 'bold', backgroundColor: 'green', fontSize: '18px', borderRadius: '10px' }}>Save Changes</button>
-      </>
-    ) : (
-      <>
-        <h2 style={{ padding: '0.5rem', fontWeight: 'bold', color: 'gold', fontSize: '50px' }} className='flex justify-center'>{post.title}</h2>
-        <p style={{ fontSize: '25px', marginBottom: '10px' }}>{post.content}</p>
-        <button onClick={() => handleEdit(post)} style={{ padding: '0.5rem', fontWeight: 'bold', backgroundColor: 'yellow', fontSize: '18px', borderRadius: '10px', marginRight: '10px' }}>Edit Post</button>
-        <button onClick={() => handleDelete(post.id)} style={{ padding: '0.5rem', fontWeight: 'bold', backgroundColor: 'red', fontSize: '18px', borderRadius: '10px' }}>Delete Post</button>
-      </>
-    )}
-  </div>
-))}
-      </div>
-    </div>
-    <Footer />
+      <Footer />
     </>
   );
 }

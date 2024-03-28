@@ -1,24 +1,37 @@
 // components/BookCard.tsx
-import React, { useState } from 'react';
+import React from 'react';
+import { useCart } from '../context/CartContext'; // Make sure the path matches your project structure
 
-interface BookCardProps {
+interface Book {
   id: number;
   cover: string;
   title: string;
   description: string;
+}
+
+interface BookCardProps extends Book {
   setShowDescriptionModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedBookDescription: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const BookCard: React.FC<BookCardProps> = ({
+  id,
   cover,
   title,
   description,
   setShowDescriptionModal,
-  setSelectedBookDescription
+  setSelectedBookDescription,
 }) => {
+  const { addToCart } = useCart(); // Using useCart hook to get addToCart function
+
   const truncateText = (text: string, length: number): string => {
     return text.length > length ? text.substring(0, length) + "..." : text;
+  };
+
+  const handleAddToCart = () => {
+    // Define the book item structure based on what addToCart expects
+    const bookItem = { id, cover, title, description };
+    addToCart(bookItem); // Adding the book to the cart
   };
 
   return (
@@ -35,6 +48,12 @@ const BookCard: React.FC<BookCardProps> = ({
           }}
         >
           Read More
+        </button>
+        <button
+          className="mt-4 ml-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={handleAddToCart}
+        >
+          Add to Cart
         </button>
       </div>
     </div>

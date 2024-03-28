@@ -4,9 +4,10 @@ from flask_httpauth import HTTPBasicAuth
 from flask_sqlalchemy import SQLAlchemy
 from models import db
 from models.BlogPost import BlogPost
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
+from functools import wraps
 from models.User import User
 
 app = Flask(__name__)
@@ -28,26 +29,16 @@ books = [
     {"id": 6, "title": "???", "description": "The sixth and final book in the SHARP-TALES series is expected in the fall of 2024. Subscribe now to stay up to date.", "cover": "https://i.imgur.com/FjsjqyD.png"}
 ]
 
-users = {
-    "user1": "password1",
-    "user2": "password2"
-}
 
-# Assuming this structure for each blog post
-blog_posts = [
-    {
-        'id': 1,
-        'title': 'First Post',
-        'content': 'Content of the first post.',
-        # Include other blog post attributes here
-    },
-    # ... other posts
-]
-
-@auth.verify_password
-def verify_password(username, password):
-    if username in users and users[username] == password:
-        return username
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        current_user = get_jwt_identity()
+        user = User.query.filter_by(username=current_user).first()
+        if user is None or not user.is_admin:
+            return jsonify({'error': 'Admin access required'}), 403
+        return fn(*args, **kwargs)
+    return wrapper
 
 @auth.error_handler
 def unauthorized():
@@ -78,19 +69,27 @@ def signup():
 
     return jsonify(access_token=access_token), 201
 
-@app.route('/api/login', methods=['GET'])
-@jwt_required()
+
+
+@app.route('/api/login', methods=['POST'])
+# @jwt_required()
 def login():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+
     username = request.json.get('username', None)
     password = request.json.get('password', None)
-    # This example uses plain text for simplicity. Implement proper password hashing in production.
-    user = users.get(username)
-    print(user)
-    if user:
-        access_token = create_access_token(identity=username, expires_delta=timedelta(hours=1))
-        print(access_token)
-        return jsonify(access_token=access_token)
-    return jsonify({"msg": "Bad username or password"}), 401
+
+    if not username or not password:
+        return jsonify({"msg": "Missing username or password"}), 400
+
+    user = User.query.filter_by(username=username).first()
+
+    if user and bcrypt.check_password_hash(user.password_hash, password):
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token, is_admin=user.is_admin), 200
+    else:
+        return jsonify({"msg": "Bad username or password"}), 401
 
 
 # Blog CRUD Operations
@@ -101,6 +100,7 @@ def get_blog_posts():
 
 @app.route('/api/blog', methods=['POST'])
 @jwt_required()
+@admin_required
 def create_blog_post():
     post_data = request.json
     if not post_data or not post_data.get('title') or not post_data.get('content'):
@@ -137,6 +137,19 @@ def delete_blog_post(post_id):
 
 # with app.app_context():
 #     db.create_all()
+#     existing_user = User.query.filter_by(username='admin').first()
+
+#     if existing_user:
+#         print("Admin user already exists. Updating to admin if not already.")
+#         existing_user.is_admin = True
+#         db.session.commit()
+#     else:
+#         print("Creating new admin user.")
+#         admin_user = User(username='admin', is_admin=True)
+#         admin_user.set_password('password')  # Set a secure password
+#         db.session.add(admin_user)
+#         db.session.commit()
+
 
 
 if __name__ == '__main__':

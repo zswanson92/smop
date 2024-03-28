@@ -9,11 +9,17 @@ import { CgUserAdd } from "react-icons/cg";
 import { BiLogOut } from "react-icons/bi";
 import { GiPirateCaptain } from "react-icons/gi";
 import { GiPirateCannon } from "react-icons/gi";
+import { useCart } from '../context/CartContext';
+import CartModal from './CartModal';
 
 const Navbar = () => {
   const { isLoggedIn, logOut } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const { cartItems } = useCart();
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+
+  const toggleCartModal = () => setIsCartModalOpen(!isCartModalOpen);
 
 
   return (
@@ -54,6 +60,24 @@ const Navbar = () => {
       <Modal isOpen={showSignupModal} onClose={() => setShowSignupModal(false)}>
         <SignupForm onClose={() => setShowSignupModal(false)} />
       </Modal>
+      <div className="cart-icon cursor-pointer" onClick={toggleCartModal}>
+        <svg
+          className="w-6 h-6 inline-block"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 3h2l.4 2M7 13.01l-.4-2m-.6 2H17m2.4-2l-.4 2m.4 2l-.4 2m-15.6 0H17m2.4-2l-.4 2m.4 2l-.4 2m-15.6 0H17m4-12l-.4 2M21 7H3m0 0L2 19a2 2 0 002 2h12a2 2 0 002-2L17 7m-5 4h-2m4 0h-2m-2 0h-2"
+          />
+        </svg>
+        <span>({cartItems.length})</span>
+      </div>
+      {isCartModalOpen && <CartModal onClose={toggleCartModal} />}
     </nav>
   );
 };

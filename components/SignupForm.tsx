@@ -21,16 +21,16 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose }) => {
         },
         body: JSON.stringify({ username, password }),
       });
-
       if (response.ok) {
-        const data = await response.json(); // Get the data from the response
-        logIn(data.access_token); // Use the token to log in
-        onClose(); // Close the signup form/modal
+        const data = await response.json(); // Assuming this includes the access_token
+        logIn(data.access_token, false); // Assuming new sign-ups are not admins, hence false
+        onClose(); // Close the form/modal
         alert('Signup successful');
-      } else {
+    } else {
+        // Handle signup failure
         const data = await response.json();
-        alert(`Signup failed: ${data.error}`);
-      }
+        alert(`Signup failed: ${data.message}`);
+    }
     } catch (error) {
       console.error('Error:', error);
       alert('Signup failed: An error occurred');

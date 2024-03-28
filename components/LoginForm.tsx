@@ -8,7 +8,7 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { logIn } = useAuth();
+  const { logIn } = useAuth(); // This now expects logIn to handle both token and isAdmin
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,9 +24,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
 
       if (response.ok) {
         const data = await response.json();
-        const { access_token } = await response.json();
-        localStorage.setItem('access_token', data.access_token); // Store the token
-        logIn(access_token); // Update the auth state to logged in
+        // No need to manually set items in localStorage here; let the context handle it
+        logIn(data.access_token, data.is_admin); // Pass both the access token and admin status to logIn
         onClose(); // Close the modal
       } else {
         alert('Login failed');
@@ -37,9 +36,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
     }
   };
 
-
   return (
-    <form onSubmit={handleSubmit} style={{ padding:'20px', display: 'flex', flexDirection: 'column', width: '520px',  backgroundImage: 'url(/login_form_pic.png)', backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: '10px'}}>
+    <form onSubmit={handleSubmit} style={{ padding: '20px', display: 'flex', flexDirection: 'column', width: '520px', backgroundImage: 'url(/login_form_pic.png)', backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: '10px'}}>
       <label htmlFor="username" className='flex justify-center' style={{ marginBottom: '0.5rem', color: 'white', fontWeight: 'bold', fontSize: '20px' }}>Username</label>
       <input
         id="username"
