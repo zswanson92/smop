@@ -46,8 +46,8 @@ export default function Blog() {
   const handleUpdate = async (postId: number) => {
     const token = localStorage.getItem('access_token');
     try {
-      const response = await fetch(`http://localhost:5000/api/blog/${postId}`, {
-        method: 'PUT', // Assuming your API uses PUT for updates
+      const response = await fetch(`${backendUrl}/api/blog/${postId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -58,7 +58,7 @@ export default function Blog() {
       if (response.ok) {
         const updatedPost = await response.json();
         setPosts(posts => posts.map(post => post.id === postId ? updatedPost : post));
-        setEditingId(null); // Reset editing state
+        setEditingId(null);
         alert('Post updated successfully');
       } else {
         alert('Failed to update post');
@@ -76,7 +76,7 @@ export default function Blog() {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch('http://localhost:5000/api/blog', {
+      const response = await fetch(`${backendUrl}/api/blog`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export default function Blog() {
   const handleDelete = async (postId: number) => {
     const token = localStorage.getItem('access_token');
     try {
-      const response = await fetch(`http://localhost:5000/api/blog/${postId}`, {
+      const response = await fetch(`${backendUrl}/api/blog/${postId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
