@@ -19,9 +19,11 @@ export default function Blog() {
   const [editContent, setEditContent] = useState('');
   const { isAdmin } = useAuth();
 
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/blog')
+    fetch(`${backendUrl}/api/blog`)
       .then((response) => response.json())
       .then(setPosts)
       .catch((error) => console.error('Error fetching blog posts:', error));

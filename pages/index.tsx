@@ -37,8 +37,11 @@ export default function Home() {
 
   const { isLoggedIn, logOut } = useAuth();
 
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
+
   useEffect(() => {
-    fetch('http://localhost:5000/api/books')
+    fetch(`${backendUrl}/api/books`)
       .then(response => response.json())
       .then(data => setBooks(data))
       .catch(error => console.error("There was an error fetching the books:", error));

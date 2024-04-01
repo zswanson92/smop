@@ -10,11 +10,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
   const [password, setPassword] = useState('');
   const { logIn } = useAuth(); // This now expects logIn to handle both token and isAdmin
 
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch(`${backendUrl}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
