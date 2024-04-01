@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
 from models import db
 from models.BlogPost import BlogPost
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -25,6 +26,9 @@ db.init_app(app)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 migrate = Migrate(app, db)
+
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 books = [
     {"id": 1, "title": "Gerard's Fortune", "description": "A boy grows up hunting, a gamekeeper for the castle. A hunting guide by day, who dreams each night of the sea. Old enough to sign aboard a ship, he sails away from home to follow his dreams. The shipwreck leaves him stranded on an island. the natives adopt him, and he becomes part of the village. Five years pass before another ship arrives; but instead of a rescue, Pirates attack the island. The village fights back, and Gerard helps them capture the ship. the crew needs a captain, and he needs a way back home. Can he keep them safe? Can Gerard hold onto the treasure he has found?", "cover": "https://sevenminutesofpiracy.com/wp-content/uploads/2022/12/Fortune-ebook-1-188x300.png"},
@@ -164,5 +168,9 @@ def create_admin_user():
 
 if __name__ == '__main__':
     with app.app_context():
-        create_admin_user()
-    app.run(debug=True)
+        if os.getenv('RUN_MIGRATIONS', 'False').lower() in ['true', '1', 't']:
+            try:
+                manager.run(commands=['db', 'upgrade'])
+            except Exception as e:
+                print(f"Failed to run migrations: {e}")
+        app.run()
