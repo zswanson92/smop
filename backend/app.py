@@ -141,23 +141,28 @@ def delete_blog_post(post_id):
     return jsonify({'message': 'Post deleted'})
 
 
-# @app.before_first_request
 def create_admin_user():
-    db.create_all()  # Make sure all tables are created
-    admin_username = os.getenv('ADMIN_USERNAME')
-    admin_password = os.getenv('ADMIN_PASSWORD')
+    """Create an admin user if not exists and if the CREATE_ADMIN_USER env var is True."""
+    should_create_admin = os.getenv('CREATE_ADMIN_USER', 'False').lower() in ['true', '1', 't']
 
-    # Check if the admin user already exists
-    admin_user = User.query.filter_by(username=admin_username).first()
-    if not admin_user:
-        # Create a new admin user
-        admin_user = User(username=admin_username, is_admin=True)
-        admin_user.set_password(admin_password)  # Ensure you have a method to set and hash the password securely
-        db.session.add(admin_user)
-        db.session.commit()
+    if should_create_admin:
+        admin_username = os.getenv('ADMIN_USERNAME')
+        admin_password = os.getenv('ADMIN_PASSWORD')
 
-
+        # Check if the admin user already exists
+        admin_user = User.query.filter_by(username=admin_username).first()
+        if not admin_user:
+            # Create a new admin user
+            admin_user = User(username=admin_username, is_admin=True)
+            admin_user.password_hash = bcrypt.generate_password_hash(admin_password).decode('utf-8')
+            db.session.add(admin_user)
+            db.session.commit()
+            print('Admin user created successfully.')
+        else:
+            print('Admin user already exists.')
 
 
 if __name__ == '__main__':
+    with app.app_context():
+        create_admin_user()
     app.run(debug=True)
