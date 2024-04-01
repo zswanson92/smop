@@ -21,7 +21,7 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 auth = HTTPBasicAuth()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+db.init_app(app)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 migrate = Migrate(app, db)
