@@ -139,7 +139,7 @@ def delete_blog_post(post_id):
     return jsonify({'message': 'Post deleted'})
 
 
-@app.before_first_request
+# @app.before_first_request
 def create_admin_user():
     db.create_all()  # Make sure all tables are created
     admin_username = os.getenv('ADMIN_USERNAME')
