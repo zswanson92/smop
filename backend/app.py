@@ -154,7 +154,7 @@ def create_admin_user():
         if not admin_user:
             # Create a new admin user
             admin_user = User(username=admin_username, is_admin=True)
-            admin_user.password_hash = bcrypt.generate_password_hash(admin_password).decode('utf-8')
+            admin_user.set_password(admin_password)  # Using the set_password method
             db.session.add(admin_user)
             db.session.commit()
             print('Admin user created successfully.')
