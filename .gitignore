@@ -28,6 +28,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -57,3 +58,25 @@ __pycache__/
 .eslintrc.json
 .gitattributes
 credentials.json
+
+*.db
+*.sqlite
+*.sqlite3
+
+__pycache__/
+*.py[cod]
+
+*.log
+*.sql
+*.sqlite
+
+.flaskenv
+.vscode/
+
+/dist
+/tmp
+
+/build/
+/dist/
+/egg-info/
+*.egg-info/

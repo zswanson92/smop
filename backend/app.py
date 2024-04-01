@@ -9,15 +9,19 @@ from flask_bcrypt import Bcrypt
 from datetime import timedelta
 from functools import wraps
 from models.User import User
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 CORS(app)
 auth = HTTPBasicAuth()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-app.config['JWT_SECRET_KEY'] = 'your-secret-key'
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 
 books = [
@@ -135,20 +139,21 @@ def delete_blog_post(post_id):
     return jsonify({'message': 'Post deleted'})
 
 
-# with app.app_context():
-#     db.create_all()
-#     existing_user = User.query.filter_by(username='admin').first()
+@app.before_first_request
+def create_admin_user():
+    db.create_all()  # Make sure all tables are created
+    admin_username = os.getenv('ADMIN_USERNAME')
+    admin_password = os.getenv('ADMIN_PASSWORD')
 
-#     if existing_user:
-#         print("Admin user already exists. Updating to admin if not already.")
-#         existing_user.is_admin = True
-#         db.session.commit()
-#     else:
-#         print("Creating new admin user.")
-#         admin_user = User(username='admin', is_admin=True)
-#         admin_user.set_password('password')  # Set a secure password
-#         db.session.add(admin_user)
-#         db.session.commit()
+    # Check if the admin user already exists
+    admin_user = User.query.filter_by(username=admin_username).first()
+    if not admin_user:
+        # Create a new admin user
+        admin_user = User(username=admin_username, is_admin=True)
+        admin_user.set_password(admin_password)  # Ensure you have a method to set and hash the password securely
+        db.session.add(admin_user)
+        db.session.commit()
+
 
 
 
