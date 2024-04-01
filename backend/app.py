@@ -16,7 +16,7 @@ load_dotenv()
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "https://smop.onrender.com/"}})
 auth = HTTPBasicAuth()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
