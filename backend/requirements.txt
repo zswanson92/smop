@@ -76,6 +76,7 @@ pydantic==1.10.11
 PyJWT==2.8.0
 pyparsing==3.0.9
 pyscopg2==66.0.2
+psycopg2-binary>=2.8
 pytest==7.2.0
 python-crfsuite==0.9.9
 python-dateutil==2.8.2
