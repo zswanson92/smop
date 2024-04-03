@@ -1,4 +1,3 @@
-// components/CartModal.tsx
 import React from 'react';
 import { useCart } from '../context/CartContext';
 
@@ -7,16 +6,16 @@ const CartModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   return (
     <div className="cart-modal">
-      <h2>Your Cart</h2>
-      {cartItems.length === 0 && <p>Your cart is empty</p>}
+      <h2 className='text-silver'>Your Cart</h2>
+      {cartItems.length === 0 && <p className='text-silver'>Your cart is empty</p>}
       <ul>
         {cartItems.map((item) => (
           <li key={item.id}>
-            {item.title} - <button onClick={() => removeFromCart(item.id)}>Remove</button>
+            <span className='text-silver'>{item.title}</span> - <button className='text-silver' onClick={() => removeFromCart(item.id)}>Remove</button>
           </li>
         ))}
       </ul>
-      <button onClick={onClose}>Close</button>
+      <button className='text-silver' onClick={onClose}>Close</button>
     </div>
   );
 };

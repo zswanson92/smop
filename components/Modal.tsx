@@ -24,7 +24,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)', // Darker backdrop
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -37,22 +37,22 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
       <div
         style={{
           padding: '20px',
-          background: '#202225', // A darker shade for contrast
-          color: '#FFFFFF', // White text color
+          background: '#202225',
+          color: '#FFFFFF',
           borderRadius: '15px',
           boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          alignItems: 'start', // Align text to the start
+          alignItems: 'start',
           position: 'relative',
           transition: 'transform 200ms ease-in-out, opacity 200ms ease-in-out',
           transform: isOpen ? 'scale(1)' : 'scale(0.95)',
           opacity: isOpen ? 1 : 0,
-          maxWidth: '600px', // Max width for the modal
-          width: '90%', // Responsive width
+          maxWidth: '600px',
+          width: '90%',
         }}
-        onClick={(e) => e.stopPropagation()} // Prevent onClick from triggering on the backdrop
+        onClick={(e) => e.stopPropagation()}
       >
         <div style={{ marginBottom: '20px', lineHeight: '1.6' }}>
           {children}
@@ -63,13 +63,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
             position: 'absolute',
             top: 15,
             right: 15,
-            background: 'gold', // A blue shade for the button
+            background: 'gold',
             border: 'none',
-            borderRadius: '50%', // Circular button
+            borderRadius: '50%',
             padding: '10px',
             cursor: 'pointer',
             fontWeight: 'bold',
-            color: '#FFFFFF', // White color for the close button text
+            color: '#FFFFFF',
           }}
         >
           X

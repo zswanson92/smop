@@ -7,7 +7,6 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/NavBar';
 import Footer from '../components/Footer';
 
-
 interface Book {
   id: number;
   cover: string;
@@ -39,7 +38,6 @@ export default function Home() {
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
-
   useEffect(() => {
     fetch(`${backendUrl}/api/books`)
       .then(response => response.json())
@@ -47,13 +45,13 @@ export default function Home() {
       .catch(error => console.error("There was an error fetching the books:", error));
   }, []);
 
-  // useEffect to change image every set number of seconds
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % rotatingImages.length);
     }, 10000); // Change image every 5 seconds
 
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
   }, [rotatingImages.length]);
 
   const toggleSignup = () => setShowSignup(!showSignup);
@@ -111,7 +109,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {books.map((book) => (
             <BookCard
-              key={book.id} // Add the unique key here using the book's id
+              key={book.id}
               id={book.id}
               cover={book.cover}
               title={book.title}
@@ -122,9 +120,8 @@ export default function Home() {
           ))}
         </div>
       </section>
-        <form onSubmit={handleSubmit} className="flex flex-col items-center" id="subscribe">
-          {/* Existing Subscription Form */}
-        </form>
+        {/* <form onSubmit={handleSubmit} className="flex flex-col items-center" id="subscribe">
+        </form> */}
       </div>
       <Modal isOpen={showSignup} onClose={toggleSignup}>
         <SignupForm onClose={toggleSignup}/>
@@ -136,11 +133,11 @@ export default function Home() {
       <p style={{
         fontFamily: '"Merriweather", serif',
         fontSize: '22px',
-        lineHeight: '1.75', // Increase line height for readability
-        textAlign: 'left', // Align text to the left
-        padding: '20px', // Add more padding for white space
-        overflowY: 'auto', // Add scroll for long text
-        maxHeight: '70vh', // Prevent modal from getting too long
+        lineHeight: '1.75',
+        textAlign: 'left',
+        padding: '20px',
+        overflowY: 'auto',
+        maxHeight: '70vh',
       }}>
         {selectedBookDescription.split('\n').map((paragraph, index) => (
           <React.Fragment key={index}>

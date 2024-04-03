@@ -1,6 +1,5 @@
-// components/BookCard.tsx
 import React from 'react';
-import { useCart } from '../context/CartContext'; // Make sure the path matches your project structure
+import { useCart } from '../context/CartContext';
 
 interface Book {
   id: number;
@@ -22,16 +21,15 @@ const BookCard: React.FC<BookCardProps> = ({
   setShowDescriptionModal,
   setSelectedBookDescription,
 }) => {
-  const { addToCart } = useCart(); // Using useCart hook to get addToCart function
+  const { addToCart } = useCart();
 
   const truncateText = (text: string, length: number): string => {
     return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
   const handleAddToCart = () => {
-    // Define the book item structure based on what addToCart expects
     const bookItem = { id, cover, title, description };
-    addToCart(bookItem); // Adding the book to the cart
+    addToCart(bookItem);
   };
 
   return (
@@ -41,7 +39,7 @@ const BookCard: React.FC<BookCardProps> = ({
         <div className="font-bold text-xl mb-2">{title}</div>
         <p className="text-gray-700 text-base">{truncateText(description, 100)}</p>
         <button
-          className="text-blue-500 hover:text-blue-800 text-sm"
+          className="mt-4 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-2 rounded"
           onClick={() => {
             setSelectedBookDescription(description);
             setShowDescriptionModal(true);
@@ -50,7 +48,7 @@ const BookCard: React.FC<BookCardProps> = ({
           Read More
         </button>
         <button
-          className="mt-4 ml-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="mt-4 ml-24 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-2 rounded"
           onClick={handleAddToCart}
         >
           Add to Cart
