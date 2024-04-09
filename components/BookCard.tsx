@@ -1,11 +1,14 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
+import Link from 'next/link';
+
 
 interface Book {
   id: number;
   cover: string;
   title: string;
   description: string;
+  amazonLink: string;
 }
 
 interface BookCardProps extends Book {
@@ -20,6 +23,7 @@ const BookCard: React.FC<BookCardProps> = ({
   description,
   setShowDescriptionModal,
   setSelectedBookDescription,
+  amazonLink,
 }) => {
   const { addToCart } = useCart();
 
@@ -34,7 +38,9 @@ const BookCard: React.FC<BookCardProps> = ({
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white text-gray-800">
-      <img className="w-full" src={cover} alt={`Cover of ${title}`} />
+      <Link href={amazonLink} target="_blank" rel="noopener noreferrer">
+        <img className="w-full" src={cover} alt={`Cover of ${title}`} />
+      </Link>
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{title}</div>
         <p className="text-gray-700 text-base">{truncateText(description, 100)}</p>

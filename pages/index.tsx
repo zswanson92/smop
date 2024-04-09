@@ -97,15 +97,16 @@ export default function Home() {
     <>
       <Navbar />
       <div className="pt-24 bg-gray-900 min-h-screen flex flex-col items-center justify-center text-white">
-        <h1 className="text-4xl font-bold mb-4 text-gold">Ahoy! Welcome to Seven Minutes of Piracy</h1>
+        <h1 className="text-6xl font-bold mb-4 text-gold">Welcome to Seven Minutes of Piracy</h1>
+
         {/* Rotating Image */}
-        <img src={rotatingImages[currentImageIndex].src} alt="Rotating Image" className="mb-8 rounded-lg shadow-lg" />
+        <img src={rotatingImages[currentImageIndex].src} alt="Rotating Image" className="mb-8 rounded-lg shadow-lg rotating-image" />
 
         <p className="text-lg mb-8 text-gold">Discover me latest treasures below, explore the blog above, and subscribe for updates, ye landlubber!</p>
 
         {/* Featured Books Section */}
         <section className="container mx-auto px-6">
-        <h2 className="text-2xl font-bold text-center my-8 text-gold">Featured Books</h2>
+        <h2 className="text-2xl font-bold text-center my-8 text-gold">Published Book Collection</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {books.map((book) => (
             <BookCard
@@ -114,11 +115,16 @@ export default function Home() {
               cover={book.cover}
               title={book.title}
               description={book.description}
+              amazonLink={book.amazonLink}
               setShowDescriptionModal={setShowDescriptionModal}
               setSelectedBookDescription={setSelectedBookDescription}
             />
           ))}
         </div>
+
+      </section>
+      <section className='mt-10'>
+        <h2 className='font-bold text-gold'>Home port for the Sharp Tales series, Captain Gerard the Sharp, authored by Robert Liebertz</h2>
       </section>
         {/* <form onSubmit={handleSubmit} className="flex flex-col items-center" id="subscribe">
         </form> */}

@@ -46,7 +46,6 @@ const AboutAuthor = () => {
                   <h3 className="text-2xl font-semibold mb-3">Contact Information:</h3>
                   {/* Add contact details */}
                   <p className="mb-3 text-xl">Email: sevenminutesofpiracy@gmail.com</p>
-                  <p className="mb-3 text-xl">Phone: (123) 456-7890</p>
                   <p className="mb-3 text-xl">Home Port: Gresham, Or</p>
                 </section>
                 <img className="rounded-lg shadow-lg mb-8" src="/gresham_or.png" alt="Map" />
