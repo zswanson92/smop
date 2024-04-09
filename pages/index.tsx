@@ -12,6 +12,7 @@ interface Book {
   cover: string;
   title: string;
   description: string;
+  amazonLink: string;
 }
 
 interface ImageData {
